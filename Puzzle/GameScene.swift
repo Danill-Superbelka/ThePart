@@ -32,7 +32,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     override func didMove(to view: SKView) {
         makePart()
-       
+        
         rotateRec.addTarget(self, action: #selector(GameScene.rotatedView (_:)))
       
         panRec.maximumNumberOfTouches = 1
@@ -90,6 +90,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if (sender.state == .changed){
             node?.zRotation = sender.rotation
         }
+        if (sender.state == .ended){
+            node?.zRotation = sender.rotation
+        }
+        
     }
     
 }
