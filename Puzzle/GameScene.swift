@@ -12,6 +12,7 @@ import SwiftUI
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     private var currentNode: SKNode?
+    private var currentOffSet: CGPoint?
     
     private let singleTapGestureRecognizer = UITapGestureRecognizer()
     private let doubleTapGestureRecognizer = UITapGestureRecognizer()
@@ -34,10 +35,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         makePart()
         
         rotateRec.addTarget(self, action: #selector(GameScene.rotatedView (_:)))
-      
-        panRec.maximumNumberOfTouches = 1
-        singleTapGestureRecognizer.numberOfTapsRequired = 1
-        doubleTapGestureRecognizer.numberOfTapsRequired = 2
+
         
         self.view!.addGestureRecognizer(rotateRec)
         physicsWorld.contactDelegate = self
@@ -49,7 +47,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         part1 = (self.childNode(withName: "Part") as? SKSpriteNode)!
         part2 = (self.childNode(withName: "Part") as? SKSpriteNode)!
       
-        background = (self.childNode(withName: "Background") as? SKSpriteNode)!
         
     }
     
@@ -60,8 +57,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             for node in touchedNodes.reversed() {
                 if node.name == "Part" {
                     self.currentNode = node
+                    self.currentOffSet = CGPoint(x: (currentNode?.position.x)! - location.x, y: (currentNode?.position.y)! - location.y)
+                    print(location, currentNode?.position, currentOffSet)
+                    
                     isPartMove = true
-//                    isPartTaped.toggle()
                 }
             }
         }
@@ -71,7 +70,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if isPartMove {
             if let touch = touches.first, let node = self.currentNode {
                 let touchLocation = touch.location(in: self)
-                node.position = touchLocation
+                node.position = CGPoint(x: touchLocation.x + currentOffSet!.x, y: touchLocation.y + currentOffSet!.y)
                 }
             }
         }
@@ -88,14 +87,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let node = self.currentNode
         
         if (sender.state == .changed){
-            node?.zRotation = sender.rotation
+            node?.zRotation = -sender.rotation
         }
         if (sender.state == .ended){
-            node?.zRotation = sender.rotation
+            node?.zRotation = -sender.rotation
         }
         
     }
     
+   
 }
 
 
